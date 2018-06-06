@@ -1,0 +1,38 @@
+{
+  "app_id": "play_example",
+  "app_source": {
+    "user": null,
+    "password": null,
+    "version": "1.0-SNAPSHOT",
+    "url": "https://github.com/nstojiljkovic/application_play/raw/artifacts/play-2.6/play-scala-starter-example-1.0-SNAPSHOT.tgz",
+    "checksum": "ae56a1f97f32aae73de25de599d7ce45191eee46b900205e50d1082bf529b0ae"
+  },
+  "attributes": {},
+  "data_sources": [
+    {
+      "type": "None"
+    }
+  ],
+  "domains": [
+    "play_example.localdomain",
+    "*.play_example.localdomain",
+    "localhost"
+  ],
+  "environment": {
+    "PLAY_APP": "true",
+    "APP_USER_UID": "10001",
+    "HTTP_PORT": "9123",
+    "HTTP_ADDRESS": "127.0.0.1",
+    "APPLICATION_SECRET": "QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1uDFN];Ik@n"
+  },
+  "name": "play_example",
+  "shortname": "play_example",
+  "enable_ssl": false,
+  "ssl_configuration": {
+    "certificate": null,
+    "private_key": null,
+    "chain": null
+  },
+  "type": "other",
+  "deploy": true
+}

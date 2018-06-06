@@ -1,0 +1,15 @@
+# Include default configuration
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include "<%= @include_conf %>"
+
+play.http.secret.key=${?APPLICATION_SECRET}
+
+# Hosts
+# ~~~~~
+play.filters.hosts.allowed = <%= @domains_json %>
+
+# Override configuration
+# ~~~~~~~~~~~~~~~~~~~~~~
+<% @settings.each do |key,value| %>
+<%= key %> = <%= value %>
+<% end %>
