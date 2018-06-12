@@ -9,7 +9,7 @@ GRAPH
   application (5.2.0)
     poise (~> 2.4)
     poise-service (~> 1.0)
-  application_play (0.1.2)
+  application_play (0.1.3)
     application (~> 5.2.0)
     java_se (~> 10.0.1)
   java_se (10.0.1)

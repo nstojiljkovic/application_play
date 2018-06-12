@@ -4,6 +4,15 @@ include "<%= @include_conf %>"
 
 play.http.secret.key=${?APPLICATION_SECRET}
 
+<% if @enable_ssl %>
+# HTTPS
+# ~~~~~
+play.filters.enabled += play.filters.https.RedirectHttpsFilter
+play.filters.https.redirectEnabled = true
+play.filters.https.strictTransportSecurity="max-age=31536000; includeSubDomains"
+play.filters.https.port = <%= @https_port %>
+<% end %>
+
 # Hosts
 # ~~~~~
 play.filters.hosts.allowed = <%= @domains_json %>

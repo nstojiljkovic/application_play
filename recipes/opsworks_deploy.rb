@@ -16,11 +16,12 @@ search("aws_opsworks_command").each do |command_conf|
     app_env = app_conf['environment']
     app_source = app_conf['app_source']
 
-
     next if app_name.nil? || app_attrs.nil? || app_env.nil? || app_source.nil?
 
     play_app = app_env[node['application_play']['opsworks']['app_env_vars']['required']]
     next if play_app.nil?
+
+    ssl_configuration = app_conf['ssl_configuration'] || {}
 
     user_home_root = node['application_play']['opsworks']['apps_root_dir']
 
@@ -75,6 +76,7 @@ search("aws_opsworks_command").each do |command_conf|
         app_env app_conf['environment']
         domains app_conf['domains']
         settings node['application_play']['opsworks']['default_settings']
+        java_settings node['application_play']['opsworks']['default_java_settings']
 
         if app_env['HTTP_PORT']
           port app_env['HTTP_PORT'].to_i
@@ -82,6 +84,19 @@ search("aws_opsworks_command").each do |command_conf|
         if app_env['HTTP_ADDRESS']
           address app_env['HTTP_ADDRESS']
         end
+
+        if app_env['HTTPS_PORT']
+          https_port app_env['HTTPS_PORT'].to_i
+        end
+        if app_env['HTTPS_ADDRESS']
+          https_address app_env['HTTPS_ADDRESS']
+        end
+
+        enable_ssl app_conf['enable_ssl']
+        ssl_cert ssl_configuration['certificate']
+        ssl_key ssl_configuration['private_key']
+        ssl_chain ssl_configuration['chain']
+        security_properties node['application_play']['opsworks']['security_properties']
 
         version app_source['version']
         source_url app_source['url']

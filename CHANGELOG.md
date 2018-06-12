@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.1.3
+
+Added HTTPS support.
+
 ## 0.1.2
 
 Updated opsworks_deploy recipe to deploy only applications denoted by `aws_opsworks_command` data bag items.

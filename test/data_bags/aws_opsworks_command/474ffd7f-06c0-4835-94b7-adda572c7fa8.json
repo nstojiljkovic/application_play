@@ -2,7 +2,8 @@
   "type": "deploy",
   "args": {
     "app_ids": [
-      "play_example"
+      "play_example",
+      "play_example_https"
     ]
   },
   "sent_at": "2018-06-18T11:54:13+00:00",

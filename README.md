@@ -77,6 +77,16 @@ end
 * `service_description` – Description of the service to create. *(default: `"#{name} service"`)*
 * `port` – Port on which the application should listen to. *(default: `9000`)*
 * `address` – Address on which the application should listen to. *(default: `'0.0.0.0'`)*
+* `enable_ssl` – Enable HTTPS endpoint. All HTTP traffic will be redirected to HTTPS. *(default: `false`)*
+* `ssl_cert` – SSL certificate. *(default: `nil`)*
+* `ssl_key` – SSL private key (without password). *(default: `nil`)*
+* `ssl_chain` – SSL certificate chain. *(default: `nil`)*
+* `jks_file` – Java KeyStore (JKS) file. *(default: `"#{name}.jks"`)*
+* `jks_password` – JKS password. *(default: `"#{name}"`)*
+* `https_port` – HTTPS port on which the application should listen to (if `enable_ssl` is set to `true`). *(default: `9443`)*
+* `https_address` – Address on which the application should listen to (HTTPS endpoint, if `enable_ssl` is set to `true`). *(default: `'0.0.0.0'`)*
+* `security_properties_file` – Java security properties file. *(default: `"#{name}.security.properties"`)*
+* `security_properties` – Java security properties. *(default: `"#{'jdk.tls.disabledAlgorithms' => 'EC keySize < 160, RSA keySize < 2048, DSA keySize < 2048', 'jdk.certpath.disabledAlgorithms' => 'MD2, MD4, MD5, EC keySize < 160, RSA keySize < 2048, DSA keySize < 2048'}"`)*
 * `domains` – List of domains which should be configured as allowed hosts. *(default: `['localhost']`)*
 * `app_env` – Environment variables hash. *(default: {})*
 * `env_file` – Name of the `systemd` `EnvironmentFile` file (which will be populated by default with `app_env` hash). *(default: `"#{name}.env"`)*
@@ -96,7 +106,7 @@ end
 * `config_template_cookbook` - Cookbook where the template `config_template_source` for the `config_file` is located. *(default: `application_play`)*
 * `config_template_source` - Template for the `config_file`. *(default: `application.conf.erb`)*
 * `settings` - Production configuration hash (populated in `config_file`). *(default: `{}`)*
-* `java_settings` - Java settings to apply in the `systemd` service. *(default: `-J-server`)*
+* `java_settings` - Java settings to apply in the `systemd` service. *(default: `-J-server -Dsun.security.ssl.allowUnsafeRenegotiation=false -Djdk.tls.ephemeralDHKeySize=2048 -Djdk.tls.rejectClientInitiatedRenegotiation=true`)*
 
 ## Recipes
 
@@ -113,10 +123,13 @@ Cookbook has few recipes prepared for usage with [AWS OpsWorks](https://aws.amaz
 Each of these should be configured in the run list for a corresponding OpsWorks layer lifecycle event.
 
 OpsWorks application supports the following environment variables:
+
 * `PLAY_APP` - Signals the `opsworks_deploy` to deploy the application. *(required)*
 * `APP_USER_UID` - Recommended, signals the `opsworks_deploy` to automatically create user and group for the application. Configuring the app user uid here comes handy if you need to have the same user uid across your nodes.
 * `HTTP_PORT` - Port on which the application should listen to.
 * `HTTP_ADDRESS` - Address on which the application should listen to.
+* `HTTPS_PORT` - HTTPS port on which the application should listen to (if SSL is enabled).
+* `HTTPS_ADDRESS` -  Address on which the application should listen to (HTTPS endpoint, if SSL is enabled).
 * `APPLICATION_SECRET` - Application secret. It is obviously recommended to configure it as protected value in OpsWorks console.
 
 You can of course use any other environment variable, they will be exposed to your application and you can even use them in the default `application.conf`. That's how the secret is passed in the default application configuration file:
@@ -126,7 +139,3 @@ play.http.secret.key=${?APPLICATION_SECRET}
 ```
 
 Don't forget to take a look at the attributes `opsworks.rb` file to see the default values which are passed to the `application_play` resource.
-
-## TODO
-
-* SSL support

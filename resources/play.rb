@@ -9,6 +9,21 @@ property :service_description, :kind_of => String, :required => false, :default 
 property :port, :kind_of => Integer, :required => true, :default => 9000
 property :address, :kind_of => String, :required => true, :default => "0.0.0.0"
 
+property :https_port, :kind_of => Integer, :required => true, :default => 9443
+property :https_address, :kind_of => String, :required => true, :default => "0.0.0.0"
+
+property :enable_ssl, :kind_of => [TrueClass, FalseClass], :default => false
+property :ssl_cert, :kind_of => String
+property :ssl_key, :kind_of => String
+property :ssl_chain, :kind_of => String
+property :jks_file, :kind_of => String, :default => lazy {|a| "#{a.name}.jks"}
+property :jks_password, :kind_of => String, :default => lazy {|a| a.name}
+property :security_properties_file, :kind_of => String, :default => lazy {|a| "#{a.name}.security.properties"}
+property :security_properties, :kind_of => Hash, :default => {
+    'jdk.tls.disabledAlgorithms' => 'EC keySize < 160, RSA keySize < 2048, DSA keySize < 2048',
+    'jdk.certpath.disabledAlgorithms' => 'MD2, MD4, MD5, EC keySize < 160, RSA keySize < 2048, DSA keySize < 2048'
+}
+
 property :domains, :kind_of => Array, :required => true, :default => ['localhost']
 property :app_env, :kind_of => Object, :required => true, :default => {}
 property :env_file, :kind_of => String, :default => lazy {|a| "#{a.name}.env"}
@@ -32,4 +47,7 @@ property :config_file, :kind_of => String, :default => lazy {|a| "#{a.name}.conf
 property :config_template_cookbook, :kind_of => String, :required => false, :default => 'application_play'
 property :config_template_source, :kind_of => String, :required => false, :default => 'application.conf.erb'
 property :settings, :kind_of => Hash, :required => true, :default => {}
-property :java_settings, :kind_of => String, :required => true, :default => '-J-server'
+property :java_settings, :kind_of => String, :required => true, :default => '-J-server' +
+    '-Dsun.security.ssl.allowUnsafeRenegotiation=false ' +
+    '-Djdk.tls.ephemeralDHKeySize=2048 ' +
+    '-Djdk.tls.rejectClientInitiatedRenegotiation=true '

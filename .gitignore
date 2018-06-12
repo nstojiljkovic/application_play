@@ -19,3 +19,6 @@ bin/*
 # Chef
 .zero-knife.rb
 Policyfile.lock.json
+
+# IDE
+.idea

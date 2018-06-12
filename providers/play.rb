@@ -96,6 +96,7 @@ action :deploy do
   template config_file do
     owner deploy_user
     group deploy_group
+    mode '0640'
 
     cookbook new_resource.config_template_cookbook
     source new_resource.config_template_source
@@ -105,7 +106,9 @@ action :deploy do
           'include_conf' => ::Dir[::File.join(deploy_path, 'current/conf/application.conf')].first,
           'settings' => new_resource.settings,
           'domains' => new_resource.domains,
-          'domains_json' => JSON.pretty_generate(new_resource.domains)
+          'domains_json' => JSON.pretty_generate(new_resource.domains),
+          'enable_ssl' => new_resource.enable_ssl,
+          'https_port' => new_resource.https_port,
       }
     }
   end
@@ -152,6 +155,62 @@ action :deploy do
     java_settings = java_settings + " -J-Xms#{xms}m -J-Xmx#{xmx}m"
   end
 
+  security_properties_file = ::File.join(deploy_path, new_resource.security_properties_file)
+  java_settings = java_settings + " -Djava.security.properties=#{security_properties_file}"
+  file security_properties_file do
+    owner deploy_user
+    group deploy_group
+
+    content (new_resource.security_properties || {}).collect { |k, v| "#{k}=#{v}" }.join("\n")
+    mode '640'
+  end
+
+  if new_resource.enable_ssl
+    pem_file = ::File.join(Chef::Config['file_cache_path'], "#{app_name}.pem")
+    pkcs12_file = ::File.join(Chef::Config['file_cache_path'], "#{app_name}.pfx")
+    jks_file = ::File.join(deploy_path, new_resource.jks_file)
+
+    template pem_file do
+      source "certificate.pem.erb"
+      mode '0640'
+      owner deploy_user
+      group deploy_group
+      backup false
+      variables(
+          {
+              :cert => new_resource.ssl_cert,
+              :key => new_resource.ssl_key,
+              :chain => new_resource.ssl_chain,
+          }
+      )
+      action :create
+    end
+
+    jks_password = new_resource.jks_password
+
+    execute "Generate #{jks_file}" do
+      command <<-EOH
+        openssl pkcs12 -export -in #{pem_file} -inkey #{pem_file} -out #{pkcs12_file} -name #{app_name} -passin pass:#{jks_password} -passout pass:#{jks_password} &&
+        rm -f #{jks_file} &&
+        keytool -importkeystore -srckeystore #{pkcs12_file} -srcstoretype PKCS12  -alias #{app_name} -srcstorepass #{jks_password} -deststorepass #{jks_password} -destkeypass #{jks_password} -destkeystore #{jks_file} &&
+        chown #{deploy_user}:#{deploy_group} #{jks_file} &&
+        chmod 640 #{jks_file} &&
+        rm -f #{pem_file} &&
+        rm -f #{pkcs12_file}
+      EOH
+
+      unless new_resource.force_deploy
+        not_if "test -d #{jks_file}"
+      end
+    end
+
+    java_settings = java_settings + " -Dhttps.address=#{new_resource.https_address}"
+    java_settings = java_settings + " -Dhttps.port=#{new_resource.https_port}"
+    java_settings = java_settings + " -Dplay.server.https.keyStore.path=#{jks_file}"
+    java_settings = java_settings + " -Dplay.server.https.keyStore.type=JKS"
+    java_settings = java_settings + " -Dplay.server.https.keyStore.password=#{jks_password}"
+  end
+
   systemd_unit "#{service_name}.service" do
     content lazy {
       executable_file = ::Dir[::File.join(deploy_path, 'current/bin', '*')].reject {|file| file.include?('.')}.first
@@ -162,6 +221,7 @@ action :deploy do
          
         [Service]
         Type=simple
+        AmbientCapabilities=CAP_NET_BIND_SERVICE
         PIDFile=#{deploy_path}/RUNNING_PID
         User=#{deploy_user}
         Group=#{deploy_group}
