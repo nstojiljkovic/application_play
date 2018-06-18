@@ -2,9 +2,9 @@ name 'application_play'
 maintainer 'Nikola Stojiljkovic'
 maintainer_email 'no-reply@nikolastojiljkovic.com'
 license 'Apache-2.0'
-description 'Installs/Configures Play application'
-long_description 'Installs/Configures Play application'
-version '0.1.1'
+description 'Installs/Configures Play framework application'
+long_description 'Installs/Configures Play framework application'
+version '0.1.2'
 supports ['centos', 'ubuntu']
 chef_version '>= 12.14' if respond_to?(:chef_version)
 

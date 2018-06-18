@@ -10,12 +10,12 @@ Chef 12.1 or newer is required.
 
 ### `application_play`
 
-The `application_play` resource installs a Play application from packaged zip tarball (created using `sbt universal:packageZipTarball` 
+The `application_play` resource installs a Play framework application from packaged zip tarball (created using `sbt universal:packageZipTarball` 
 task or [`sbt-release`](https://github.com/sbt/sbt-release) plugin). The application is configured as a 
 [systemd](https://www.freedesktop.org/wiki/Software/systemd/) service. This resource is using [`application`](https://github.com/poise/application) cookbook
 version 5 as a base.
 
-The Play application is deployed using a pseudo-Capistrano folder structure but without using the obsolete Chef [`deploy`](https://docs.chef.io/resource_deploy.html) resource
+The Play framework application is deployed using a pseudo-Capistrano folder structure but without using the obsolete Chef [`deploy`](https://docs.chef.io/resource_deploy.html) resource
 or [`deploy_resource`](https://supermarket.chef.io/cookbooks/deploy_resource) from Supermarket. The implemented logic is way simpler than in the old `deploy` resource.
 There are still `current` and `releases` folders but without a rollback action. Rollback is to be done by simply reverting the version to be installed. The fact that we
 keep preconfigured number of releases will allow fast rollbacks in case of any error. Important thing to note is that there is no automated rollback on deployment 

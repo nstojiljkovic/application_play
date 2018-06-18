@@ -1,0 +1,12 @@
+{
+  "type": "deploy",
+  "args": {
+    "app_ids": [
+      "play_example"
+    ]
+  },
+  "sent_at": "2018-06-18T11:54:13+00:00",
+  "command_id": "474ffd7f-06c0-4835-94b7-adda572c7fa8",
+  "iam_user_arn": null,
+  "instance_id": "node1"
+}

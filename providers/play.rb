@@ -10,7 +10,7 @@ action :deploy do
   app_version = new_resource.version
   service_name = new_resource.service_name
 
-  ::Chef::Log.info("Deploying Play application #{app_name} to #{deploy_path} ...")
+  ::Chef::Log.info("Deploying Play framework application #{app_name} to #{deploy_path} ...")
 
   unless new_resource.source_user.nil? || new_resource.source_password.nil?
     headers = {"Authorization" => "Basic #{ Base64.encode64("#{new_resource.source_user}:#{new_resource.source_password}").gsub("\n", "") }"}
