@@ -3,16 +3,16 @@ DEPENDENCIES
   application_play
     path: .
     metadata: true
-  java_se (~> 10.0.1)
+  java_se (~> 10.0.2)
 
 GRAPH
   application (5.2.0)
     poise (~> 2.4)
     poise-service (~> 1.0)
-  application_play (0.1.3)
+  application_play (0.1.4)
     application (~> 5.2.0)
     java_se (~> 10.0.1)
-  java_se (10.0.1)
-  poise (2.8.1)
+  java_se (10.0.2)
+  poise (2.8.2)
   poise-service (1.5.2)
     poise (~> 2.0)

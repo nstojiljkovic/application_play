@@ -31,6 +31,7 @@ action :deploy do
     group deploy_group
 
     source new_resource.source_url
+    backup false
     checksum new_resource.source_checksum
     use_conditional_get true
     use_etag true

@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.1.4
+
+Prevent Chef from backing up release archives as they are handled by the `application_play` resource.
+
 ## 0.1.3
 
 Added HTTPS support.
