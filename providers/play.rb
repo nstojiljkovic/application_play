@@ -215,33 +215,40 @@ action :deploy do
   systemd_unit "#{service_name}.service" do
     content lazy {
       executable_file = ::Dir[::File.join(deploy_path, 'current/bin', '*')].reject {|file| file.include?('.')}.first
-      <<-EOU.gsub(/^\s+/, '')
-        [Unit]
-        Description=#{new_resource.service_description}
-        After=network.target
-         
-        [Service]
-        Type=simple
-        AmbientCapabilities=CAP_NET_BIND_SERVICE
-        PIDFile=#{deploy_path}/RUNNING_PID
-        User=#{deploy_user}
-        Group=#{deploy_group}
-        EnvironmentFile=#{env_file}
+      {
+          'Unit' => {
+              'Description' => new_resource.service_description,
+              'After' => 'network.target',
+          },
+          'Service' => {
+              'Type' => 'simple',
+              'PIDFile' => "#{deploy_path}/RUNNING_PID",
+              'User' => deploy_user,
+              'Group' => deploy_group,
+              'EnvironmentFile' => env_file,
+              'WorkingDirectory' => "#{deploy_path}/current",
+              'ExecStartPre' => "[ -e #{deploy_path}/RUNNING_PID ] && rm #{deploy_path}/RUNNING_PID",
+              'ExecStart' => "#{executable_file} -Dpidfile.path=#{deploy_path}/RUNNING_PID -Dconfig.file=#{config_file} -Dhttp.port=#{new_resource.port} -Dhttp.address=#{new_resource.address} #{java_settings}",
+              'ExecStop' => '/bin/kill $MAINPID',
+              'ExecStopPost' => "[ -e #{deploy_path}/RUNNING_PID ] && rm #{deploy_path}/RUNNING_PID",
+              'ExecRestart' => '/bin/kill $MAINPID',
 
-        WorkingDirectory=#{deploy_path}/current
-        ExecStartPre=[ -e #{deploy_path}/RUNNING_PID ] && rm #{deploy_path}/RUNNING_PID
-        ExecStart=#{executable_file} -Dpidfile.path=#{deploy_path}/RUNNING_PID -Dconfig.file=#{config_file} -Dhttp.port=#{new_resource.port} -Dhttp.address=#{new_resource.address} #{java_settings}
-        ExecStop=/bin/kill $MAINPID
-        ExecStopPost=[ -e #{deploy_path}/RUNNING_PID ] && rm #{deploy_path}/RUNNING_PID
-        ExecRestart=/bin/kill $MAINPID
-        Restart=on-failure
-
-        # See http://serverfault.com/a/695863
-        SuccessExitStatus=143
-         
-        [Install]
-        WantedBy=multi-user.target
-      EOU
+              'RestartSec' => '3s',
+              # 'Restart' => 'always',
+              'Restart' => 'on-failure',
+              # See http://serverfault.com/a/695863
+              'AmbientCapabilities' => 'CAP_NET_BIND_SERVICE',
+              'SuccessExitStatus' => 143,
+              'LimitFSIZE' => 'infinity',
+              'LimitCPU' => 'infinity',
+              'LimitAS' => 'infinity',
+              'LimitNOFILE' => 65536,
+              'LimitNPROC' => 16384
+          }.merge(new_resource.service_settings),
+          'Install' => {
+              'WantedBy' => 'multi-user.target'
+          }
+      }
     }
     action [:create, :enable, :start]
   end

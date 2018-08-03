@@ -75,6 +75,7 @@ end
 * `owner` – System user to deploy the application as. *(set on the parent `application` resource!)*
 * `service_name` – Name of the service to create. *(default: `name`)*
 * `service_description` – Description of the service to create. *(default: `"#{name} service"`)*
+* `service_settings` – systemd service `[Settings]` override. *(default: `{}`)*
 * `port` – Port on which the application should listen to. *(default: `9000`)*
 * `address` – Address on which the application should listen to. *(default: `'0.0.0.0'`)*
 * `enable_ssl` – Enable HTTPS endpoint. All HTTP traffic will be redirected to HTTPS. *(default: `false`)*

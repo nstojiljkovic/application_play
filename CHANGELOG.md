@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.1.5
+
+Add `service_settings` parameter to the `application_play` resource for overriding systemd service `[Settings]`.
+
 ## 0.1.4
 
 Prevent Chef from backing up release archives as they are handled by the `application_play` resource.
