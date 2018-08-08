@@ -1,0 +1,24 @@
+{
+  "architecture": "x86_64",
+  "auto_scaling_type": null,
+  "availability_zone": "local",
+  "ebs_optimized": false,
+  "ec2_instance_id": "node1",
+  "elastic_ip": null,
+  "hostname": "app1",
+  "instance_id": "node1",
+  "instance_type": "custom",
+  "layer_ids": [
+    "play_app"
+  ],
+  "os": "centos/7",
+  "private_ip": "127.0.0.1",
+  "public_ip": null,
+  "status": "online",
+  "virtualization_type": "virtualbox",
+  "infrastructure_class": "vagrant",
+  "role": [
+    "play_app"
+  ],
+  "self": true
+}

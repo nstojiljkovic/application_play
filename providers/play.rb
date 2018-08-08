@@ -94,6 +94,90 @@ action :deploy do
     action :create
   end
 
+  def settings_hash_to_str(settings = {}, str = '', indent = 0, is_arr = false)
+    res = str
+    settings.each_with_index do |kv, index|
+      if !is_arr #kv.respond_to?(:each_pair)
+        key = kv[0]
+        value = kv[1]
+      else
+        key = nil
+        value = kv
+      end
+      if value.respond_to?(:each_pair)
+        # hash
+        if key.nil?
+          res += "\n" + (" " * indent) + "{"
+        else
+          res += "\n" + (" " * indent) + key.to_s + " {"
+        end
+        res = settings_hash_to_str(value, res, indent + 2)
+        res += "\n" + (" " * indent) + "}"
+      elsif value.respond_to?(:each)
+        # array
+        if key.nil?
+          res += "\n" + (" " * indent) + "["
+        else
+          res += "\n" + (" " * indent) + key.to_s + " = ["
+        end
+        res = settings_hash_to_str(value, res, indent + 2, true)
+        res += "\n" + (" " * indent) + "]"
+      else
+        # string, symbol, number...
+        if key.nil?
+          res += "\n" + (" " * indent) + value.to_json
+        else
+          res += "\n" + (" " * indent) + key.to_s + " = " + value.to_json
+        end
+      end
+      if key.nil? && index != settings.size - 1
+        res += ","
+      end
+    end
+    res.strip
+  end
+
+  settings = Hash.new {|hash, key| hash[key] = Hash.new(&hash.default_proc)}
+  settings['akka']['actor']['provider'] = new_resource.actor_provider
+  settings['play']['akka']['actor-system'] = new_resource.actor_system_name
+  settings['play']['filters']['hosts']['allowed'] = new_resource.domains
+  settings['akka']['management']['http']['port'] = new_resource.management_port
+  settings['akka']['management']['http']['bind-port'] = new_resource.management_port
+  unless new_resource.management_hostname.nil?
+    settings['akka']['management']['http']['hostname'] = new_resource.management_hostname
+    settings['akka']['management']['http']['bind-hostname'] = new_resource.management_hostname
+  end
+  if new_resource.actor_provider == 'cluster'
+    # @see https://github.com/akka/akka-management/blob/master/cluster-bootstrap/src/main/resources/reference.conf
+    settings['akka']['management']['cluster']['bootstrap']['contact-point-discovery']['effective-name'] =
+        new_resource.actor_system_name
+
+    if new_resource.enable_config_discovery
+      settings['akka']['discovery']['method'] = 'config'
+      settings['akka']['discovery']['config']['services'][new_resource.actor_system_name]['endpoints'] =
+          new_resource.contact_points.map do |contact_point|
+            {
+                'host' => contact_point,
+                'port' => new_resource.management_port,
+            }
+          end
+    else
+      settings['akka']['cluster']['seed-nodes'] =
+          new_resource.contact_points.map do |contact_point|
+            "akka.tcp://#{new_resource.actor_system_name}@#{contact_point}:#{new_resource.remote_port}"
+          end
+    end
+  end
+  if new_resource.actor_provider == 'cluster' || new_resource.actor_provider == 'remote'
+    settings['akka']['management']['cluster']['bootstrap']['contact-point-discovery']['required-contact-point-nr'] = new_resource.required_contact_point_nr
+    settings['akka']['remote']['netty']['tcp']['port'] = new_resource.remote_port
+    unless new_resource.remote_hostname.nil?
+      settings['akka']['remote']['netty']['tcp']['hostname'] = new_resource.remote_hostname
+    end
+  end
+
+  ::Chef::Log.info(settings_hash_to_str(Chef::Mixin::DeepMerge.deep_merge(new_resource.settings, settings)))
+
   template config_file do
     owner deploy_user
     group deploy_group
@@ -105,9 +189,7 @@ action :deploy do
     variables lazy {
       {
           'include_conf' => ::Dir[::File.join(deploy_path, 'current/conf/application.conf')].first,
-          'settings' => new_resource.settings,
-          'domains' => new_resource.domains,
-          'domains_json' => JSON.pretty_generate(new_resource.domains),
+          'settings' => settings_hash_to_str(Chef::Mixin::DeepMerge.deep_merge(new_resource.settings, settings)),
           'enable_ssl' => new_resource.enable_ssl,
           'https_port' => new_resource.https_port,
       }
@@ -128,7 +210,7 @@ action :deploy do
     owner deploy_user
     group deploy_group
 
-    content (new_resource.app_env || {}).collect { |k, v| "#{k}=#{v}" }.join("\n")
+    content (new_resource.app_env || {}).collect {|k, v| "#{k}=#{v}"}.join("\n")
     mode '640'
   end
 
@@ -162,7 +244,7 @@ action :deploy do
     owner deploy_user
     group deploy_group
 
-    content (new_resource.security_properties || {}).collect { |k, v| "#{k}=#{v}" }.join("\n")
+    content (new_resource.security_properties || {}).collect {|k, v| "#{k}=#{v}"}.join("\n")
     mode '640'
   end
 
@@ -253,7 +335,7 @@ action :deploy do
     action [:create, :enable, :start]
   end
 
-  ruby_block "#{app_name} cleanup old releases"  do
+  ruby_block "#{app_name} cleanup old releases" do
     block do
       cleanup!(deploy_path, new_resource.keep_releases, app_version)
       cleanup!("#{deploy_path}/.cache", new_resource.keep_releases, app_version)

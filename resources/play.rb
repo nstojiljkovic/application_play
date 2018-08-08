@@ -10,6 +10,16 @@ property :service_settings, :kind_of => Hash, :required => false, :default => {}
 property :port, :kind_of => Integer, :required => true, :default => 9000
 property :address, :kind_of => String, :required => true, :default => "0.0.0.0"
 
+property :actor_system_name, :kind_of => String, :required => true, :default => "application"
+property :actor_provider, :kind_of => String, :required => true, :default => "local"
+property :contact_points, :kind_of => Array, :required => true, :default => []
+property :management_port, :kind_of => Integer, :required => true, :default => 8558
+property :management_hostname, :kind_of => String, :required => false
+property :remote_port, :kind_of => Integer, :required => true, :default => 2552
+property :remote_hostname, :kind_of => String, :required => false
+property :enable_config_discovery, :kind_of => [TrueClass, FalseClass], :required => true, :default => true
+property :required_contact_point_nr, :kind_of => Integer, :required => true, :default => 2
+
 property :https_port, :kind_of => Integer, :required => true, :default => 9443
 property :https_address, :kind_of => String, :required => true, :default => "0.0.0.0"
 

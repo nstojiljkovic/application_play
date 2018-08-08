@@ -66,6 +66,19 @@ search("aws_opsworks_command").each do |command_conf|
       end
     end
 
+    self_private_ip = nil
+    play_app_nodes = []
+    search("aws_opsworks_instance").each do |instance_conf|
+      if instance_conf['role'].include? 'play_app'
+        if instance_conf['self']
+          self_private_ip = instance_conf['private_ip']
+        end
+        if instance_conf['status'] == 'online'
+          play_app_nodes << instance_conf['private_ip']
+        end
+      end
+    end
+
     application app_name do
       owner deploy_user
       group deploy_group
@@ -104,6 +117,20 @@ search("aws_opsworks_command").each do |command_conf|
         source_user app_source['user']
         source_password app_source['password']
         source_checksum app_source['checksum']
+
+        actor_system_name node['application_play']['opsworks']['actor_system_name']
+        actor_provider node['application_play']['opsworks']['actor_provider']
+        if node['application_play']['opsworks']['actor_provider'] != 'local'
+          contact_points(play_app_nodes)
+          required_contact_point_nr [play_app_nodes.size, node['application_play']['opsworks']['required_contact_point_nr']].min
+        else
+          contact_points([])
+        end
+        management_port node['application_play']['opsworks']['management_port']
+        management_hostname self_private_ip
+        remote_port node['application_play']['opsworks']['remote_port']
+        remote_hostname self_private_ip
+        enable_config_discovery node['application_play']['opsworks']['enable_config_discovery']
 
         keep_releases node['application_play']['opsworks']['keep_releases']
         force_deploy node['application_play']['opsworks']['force_deploy']

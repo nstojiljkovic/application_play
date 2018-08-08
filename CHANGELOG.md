@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.1.6
+
+Add support for deploying Akka cluster and remote (with or without Akka management).
+
 ## 0.1.5
 
 Add `service_settings` parameter to the `application_play` resource for overriding systemd service `[Settings]`.

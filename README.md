@@ -78,6 +78,15 @@ end
 * `service_settings` – systemd service `[Settings]` override. *(default: `{}`)*
 * `port` – Port on which the application should listen to. *(default: `9000`)*
 * `address` – Address on which the application should listen to. *(default: `'0.0.0.0'`)*
+* `actor_system_name` - Actor system name. *(default: `'application'`)*
+* `actor_provider` - Actor provider. *(default: `'local'`, other supported options are `'cluster''` and `'remote''`)*
+* `contact_points` - Active contact points (including self) as a simple list of IP addresses. It is assumed that all nodes will share the same ports configuration. *(default: `'[]'`)*
+* `management_port` - Akka management port. *(default: `8558`)*
+* `management_hostname` - Akka management hostname. *(default: `nil`)*
+* `remote_port` - Akka remote port. *(default: `2552`)*
+* `remote_hostname` - Akka remote hostname. *(default: `nil`)*
+* `enable_config_discovery` - Should Akka management config discovery be used. If set to false, `contact_points` will be configured as plain seed nodes (without requiring Akka management to be deployed with the application). *(default: `true`)*
+* `required_contact_point_nr` - Required contact points number. *(default: `2`)*
 * `enable_ssl` – Enable HTTPS endpoint. All HTTP traffic will be redirected to HTTPS. *(default: `false`)*
 * `ssl_cert` – SSL certificate. *(default: `nil`)*
 * `ssl_key` – SSL private key (without password). *(default: `nil`)*
