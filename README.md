@@ -75,7 +75,7 @@ end
 * `owner` – System user to deploy the application as. *(set on the parent `application` resource!)*
 * `service_name` – Name of the service to create. *(default: `name`)*
 * `service_description` – Description of the service to create. *(default: `"#{name} service"`)*
-* `service_settings` – systemd service `[Settings]` override. *(default: `{}`)*
+* `systemd_settings` – systemd service override. May include `Unit`, `Service` etc. keys as per [systemd_unit resource documentation](https://docs.chef.io/resource_systemd_unit.html). *(default: `{}`)*
 * `port` – Port on which the application should listen to. *(default: `9000`)*
 * `address` – Address on which the application should listen to. *(default: `'0.0.0.0'`)*
 * `actor_system_name` - Actor system name. *(default: `'application'`)*

@@ -1,5 +1,10 @@
 # application_play CHANGELOG
 
+## 0.2.0
+
+Deprecate `service_settings` parameter in favor of more general `systemd_settings`. No backwards compatibility! 
+Fixed default systemd settings so no warnings are logged.
+
 ## 0.1.6
 
 Add support for deploying Akka cluster and remote (with or without Akka management).

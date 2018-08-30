@@ -5,7 +5,7 @@ default_action :deploy
 
 property :service_name, :kind_of => String, :required => false, :default => lazy {|a| a.name}
 property :service_description, :kind_of => String, :required => false, :default => lazy {|a| "#{a.name} service"}
-property :service_settings, :kind_of => Hash, :required => false, :default => {}
+property :systemd_settings, :kind_of => Hash, :required => true, :default => {}
 
 property :port, :kind_of => Integer, :required => true, :default => 9000
 property :address, :kind_of => String, :required => true, :default => "0.0.0.0"

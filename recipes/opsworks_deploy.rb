@@ -90,7 +90,7 @@ search("aws_opsworks_command").each do |command_conf|
         domains app_conf['domains']
         settings node['application_play']['opsworks']['default_settings']
         java_settings node['application_play']['opsworks']['default_java_settings']
-        service_settings node['application_play']['opsworks']['service_settings']
+        systemd_settings node['application_play']['opsworks']['systemd_settings']
 
         if app_env['HTTP_PORT']
           port app_env['HTTP_PORT'].to_i

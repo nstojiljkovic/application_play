@@ -35,9 +35,11 @@ default['application_play']['opsworks']['security_properties'] = {
     'jdk.tls.disabledAlgorithms' => 'EC keySize < 160, RSA keySize < 2048, DSA keySize < 2048',
     'jdk.certpath.disabledAlgorithms' => 'MD2, MD4, MD5, EC keySize < 160, RSA keySize < 2048, DSA keySize < 2048'
 }
-default['application_play']['opsworks']['service_settings'] = {
-    # 'LimitNOFILE' => 'infinity',
-    # 'LimitNPROC' => 'infinity',
+default['application_play']['opsworks']['systemd_settings'] = {
+    # 'Service' => {
+    #     'LimitNOFILE' => 'infinity',
+    #     'LimitNPROC' => 'infinity',
+    # }
 }
 default['application_play']['opsworks']['actor_system_name'] = 'application'
 default['application_play']['opsworks']['actor_provider'] = 'local'
