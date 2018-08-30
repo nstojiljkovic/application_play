@@ -86,7 +86,7 @@ end
 * `remote_port` - Akka remote port. *(default: `2552`)*
 * `remote_hostname` - Akka remote hostname. *(default: `nil`)*
 * `enable_config_discovery` - Should Akka management config discovery be used. If set to false, `contact_points` will be configured as plain seed nodes (without requiring Akka management to be deployed with the application). *(default: `true`)*
-* `required_contact_point_nr` - Required contact points number. *(default: `2`)*
+* `required_contact_point_nr` - Required contact points number. Set to `0` for auto-configuration using static quorum strategy (and `contact_points` length as a size of whole cluster). *(default: `0`)*
 * `enable_ssl` – Enable HTTPS endpoint. All HTTP traffic will be redirected to HTTPS. *(default: `false`)*
 * `ssl_cert` – SSL certificate. *(default: `nil`)*
 * `ssl_key` – SSL private key (without password). *(default: `nil`)*

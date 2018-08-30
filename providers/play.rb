@@ -169,7 +169,11 @@ action :deploy do
     end
   end
   if new_resource.actor_provider == 'cluster' || new_resource.actor_provider == 'remote'
-    settings['akka']['management']['cluster']['bootstrap']['contact-point-discovery']['required-contact-point-nr'] = new_resource.required_contact_point_nr
+    if new_resource.required_contact_point_nr == 0
+      settings['akka']['management']['cluster']['bootstrap']['contact-point-discovery']['required-contact-point-nr'] = (new_resource.contact_points.size / 2.0).floor + 1
+    else
+      settings['akka']['management']['cluster']['bootstrap']['contact-point-discovery']['required-contact-point-nr'] = new_resource.required_contact_point_nr
+    end
     settings['akka']['remote']['netty']['tcp']['port'] = new_resource.remote_port
     unless new_resource.remote_hostname.nil?
       settings['akka']['remote']['netty']['tcp']['hostname'] = new_resource.remote_hostname

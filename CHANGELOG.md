@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.2.1
+
+Change how autoconfiguration of `required_contact_point_nr` works - use static quorum strategy by default.
+
 ## 0.2.0
 
 Deprecate `service_settings` parameter in favor of more general `systemd_settings`. No backwards compatibility! 

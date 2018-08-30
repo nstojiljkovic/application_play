@@ -73,9 +73,7 @@ search("aws_opsworks_command").each do |command_conf|
         if instance_conf['self']
           self_private_ip = instance_conf['private_ip']
         end
-        if instance_conf['status'] == 'online'
-          play_app_nodes << instance_conf['private_ip']
-        end
+        play_app_nodes << instance_conf['private_ip']
       end
     end
 
@@ -122,7 +120,7 @@ search("aws_opsworks_command").each do |command_conf|
         actor_provider node['application_play']['opsworks']['actor_provider']
         if node['application_play']['opsworks']['actor_provider'] != 'local'
           contact_points(play_app_nodes)
-          required_contact_point_nr [play_app_nodes.size, node['application_play']['opsworks']['required_contact_point_nr']].min
+          required_contact_point_nr node['application_play']['opsworks']['required_contact_point_nr']
         else
           contact_points([])
         end

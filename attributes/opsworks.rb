@@ -46,4 +46,4 @@ default['application_play']['opsworks']['actor_provider'] = 'local'
 default['application_play']['opsworks']['management_port'] = 8558
 default['application_play']['opsworks']['remote_port'] = 2552
 default['application_play']['opsworks']['enable_config_discovery'] = true
-default['application_play']['opsworks']['required_contact_point_nr'] = 2
+default['application_play']['opsworks']['required_contact_point_nr'] = 0
