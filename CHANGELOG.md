@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.2.2
+
+Upgrade java_se dependency to v11.0.1.
+
 ## 0.2.1
 
 Change how autoconfiguration of `required_contact_point_nr` works - use static quorum strategy by default.
