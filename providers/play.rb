@@ -180,8 +180,6 @@ action :deploy do
     end
   end
 
-  ::Chef::Log.info(settings_hash_to_str(Chef::Mixin::DeepMerge.deep_merge(new_resource.settings, settings)))
-
   template config_file do
     owner deploy_user
     group deploy_group
@@ -193,7 +191,7 @@ action :deploy do
     variables lazy {
       {
           'include_conf' => ::Dir[::File.join(deploy_path, 'current/conf/application.conf')].first,
-          'settings' => settings_hash_to_str(Chef::Mixin::DeepMerge.deep_merge(new_resource.settings, settings)),
+          'settings' => settings_hash_to_str(Chef::Mixin::DeepMerge.merge(new_resource.settings, settings)),
           'enable_ssl' => new_resource.enable_ssl,
           'https_port' => new_resource.https_port,
       }
@@ -302,7 +300,7 @@ action :deploy do
     content lazy {
       executable_file = ::Dir[::File.join(deploy_path, 'current/bin', '*')].reject {|file| file.include?('.')}.first
 
-      Chef::Mixin::DeepMerge.deep_merge(
+      Chef::Mixin::DeepMerge.merge(
           {
               'Unit' => {
                   'Description' => new_resource.service_description,

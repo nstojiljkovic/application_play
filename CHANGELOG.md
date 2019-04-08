@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.2.3
+
+Replace DeepMerge.deep_merge with DeepMerge.merge to fix the order parameters.
+
 ## 0.2.2
 
 Upgrade java_se dependency to v11.0.1.
