@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.2.4
+
+Pass JKS_PASSWORD OpsWorks env var to play resource during deployment.
+
 ## 0.2.3
 
 Replace DeepMerge.deep_merge with DeepMerge.merge to fix the order parameters.
