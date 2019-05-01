@@ -90,6 +90,10 @@ search("aws_opsworks_command").each do |command_conf|
         java_settings node['application_play']['opsworks']['default_java_settings']
         systemd_settings node['application_play']['opsworks']['systemd_settings']
 
+        if app_env['JKS_PASSWORD']
+          jks_password app_env['JKS_PASSWORD']
+        end
+
         if app_env['HTTP_PORT']
           port app_env['HTTP_PORT'].to_i
         end
