@@ -175,8 +175,10 @@ action :deploy do
       settings['akka']['management']['cluster']['bootstrap']['contact-point-discovery']['required-contact-point-nr'] = new_resource.required_contact_point_nr
     end
     settings['akka']['remote']['netty']['tcp']['port'] = new_resource.remote_port
+    settings['akka']['remote']['artery']['canonical']['port'] = new_resource.remote_port
     unless new_resource.remote_hostname.nil?
       settings['akka']['remote']['netty']['tcp']['hostname'] = new_resource.remote_hostname
+      settings['akka']['remote']['artery']['canonical']['hostname'] = new_resource.remote_hostname
     end
   end
 
