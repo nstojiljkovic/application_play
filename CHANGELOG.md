@@ -1,5 +1,9 @@
 # application_play CHANGELOG
 
+## 0.2.5
+
+Add support for Akka Artery remoting.
+
 ## 0.2.4
 
 Pass JKS_PASSWORD OpsWorks env var to play resource during deployment.
